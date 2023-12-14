@@ -3,6 +3,7 @@ using Business.Abstract;
 using Business.Constans;
 using Business.ValidationRules.FluentValidation.GeneralContent;
 using Core.Aspects.Autofac.Validation;
+using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -26,11 +27,17 @@ namespace Business.Concrete
         {
             var generalContent = _mapper.Map<GeneralContent>(generalContentDto);
 
-            generalContent.Type = generalContent.Type.ToLowerInvariant();
+            IResult result = BusinessRules.Run(CheckIfGeneralContentNameExists(generalContent.Name));
 
-            _generalContentDal.Add(generalContent);
+            if (result is null)
+            {
+                generalContent.Type = generalContent.Type.ToLowerInvariant();
 
-            return new SuccessResult(Messages.GeneralContentAdded);
+                _generalContentDal.Add(generalContent);
+
+                return new SuccessResult(Messages.GeneralContentAdded);
+            }
+            return result;
         }
 
         public IResult HardDelete(int generalContentId)
@@ -93,6 +100,16 @@ namespace Business.Concrete
             _generalContentDal.Update(generalContent);
 
             return new SuccessResult(Messages.GeneralContentDeleted);
+        }
+
+        private IResult CheckIfGeneralContentNameExists(string generalContentName)
+        {
+            var generalContent = _generalContentDal.GetAll(g => g.Name.ToUpper() == generalContentName.ToUpper()).Any();
+            if (generalContent)
+            {
+                return new ErrorResult(Messages.GeneralContentNameAlreadyExists);
+            }
+            return new SuccessResult();
         }
     }
 }

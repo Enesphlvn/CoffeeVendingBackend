@@ -8,7 +8,7 @@ namespace Business.Mapping.Profiles.ProductProfiles
     {
         public GetProductByIdProfile()
         {
-            CreateMap<Product, GetProductDto>().ReverseMap();
+            CreateMap<Product, GetProductByIdDto>().ReverseMap();
         }
     }
 }

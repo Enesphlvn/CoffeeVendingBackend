@@ -1,6 +1,4 @@
 ﻿using Business.Abstract;
-using Entities.Concrete;
-using Entities.DTOs.GeneralContent;
 using Entities.DTOs.ProductContent;
 using Microsoft.AspNetCore.Mvc;
 
@@ -73,7 +71,7 @@ namespace WebAPI.Controllers
             {
                 return Ok(result);
             }
-            return BadRequest();
+            return BadRequest(result);
         }
 
         [HttpPut("delete")]
@@ -84,7 +82,7 @@ namespace WebAPI.Controllers
             {
                 return Ok(result);
             }
-            return BadRequest();
+            return BadRequest(result);
         }
 
         [HttpDelete("harddelete")]

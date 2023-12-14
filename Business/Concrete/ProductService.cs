@@ -3,6 +3,7 @@ using Business.Abstract;
 using Business.Constans;
 using Business.ValidationRules.FluentValidation.Product;
 using Core.Aspects.Autofac.Validation;
+using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -26,8 +27,14 @@ namespace Business.Concrete
         {
             var product = _mapper.Map<Product>(productDto);
 
-            _productDal.Add(product);
-            return new SuccessResult(Messages.ProductAdded);
+            IResult result = BusinessRules.Run(CheckIfProductNameExists(product.Name));
+
+            if (result is null)
+            {
+                _productDal.Add(product);
+                return new SuccessResult(Messages.ProductAdded);
+            }
+            return result;
         }
 
         public IResult HardDelete(int productId)
@@ -46,15 +53,18 @@ namespace Business.Concrete
             return new SuccessDataResult<List<GetProductDto>>(productDtos, Messages.ProductsListed);
         }
 
-        public IDataResult<Product> GetById(int productId)
+        public IDataResult<GetProductByIdDto> GetById(int productId)
         {
-            var result = _productDal.Get(P => P.Id == productId);
+            var product = _productDal.Get(p => p.Id == productId);
 
-            if (result is null)
+            if (product is null)
             {
-                return new ErrorDataResult<Product>(Messages.ProductIsNull);
+                return new ErrorDataResult<GetProductByIdDto>(Messages.ProductIsNull);
             }
-            return new SuccessDataResult<Product>(result, Messages.ProductIdListed);
+
+            var productDtos = _mapper.Map<GetProductByIdDto>(product);
+
+            return new SuccessDataResult<GetProductByIdDto>(productDtos, Messages.ProductIdListed);
         }
 
         [ValidationAspect(typeof(UpdateProductValidator))]
@@ -87,6 +97,17 @@ namespace Business.Concrete
             _productDal.Update(product);
 
             return new SuccessResult(Messages.ProductDeleted);
+        }
+
+        private IResult CheckIfProductNameExists(string productName)
+        {
+            var product = _productDal.GetAll(p => p.Name.ToUpper() == productName.ToUpper()).Any();
+
+            if (product)
+            {
+                return new ErrorResult(Messages.ProductNameAlreadyExists);
+            }
+            return new SuccessResult();
         }
     }
 }

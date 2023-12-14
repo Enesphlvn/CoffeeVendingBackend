@@ -1,14 +1,13 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Business.DependecyResolvers.Autofac;
-using Business.Mapping.Profiles.OrderProfiles;
 using Business.Mapping.Profiles.ProductProfiles;
 using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddAutoMapper(typeof(CreateProductProfile), typeof(GetOrderByIdProfile));
+builder.Services.AddAutoMapper(typeof(CreateProductProfile));
 
 builder.Services.AddControllers();
 
@@ -21,7 +20,6 @@ builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 
 
 builder.Services.AddDbContext<CoffeeVendingContext>();
