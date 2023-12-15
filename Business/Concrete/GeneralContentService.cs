@@ -43,6 +43,10 @@ namespace Business.Concrete
         public IResult HardDelete(int generalContentId)
         {
             GeneralContent generalContent = _generalContentDal.Get(g => g.Id == generalContentId);
+            if(generalContent is null)
+            {
+                return new ErrorResult(Messages.NoDataOnThisId);
+            }
             _generalContentDal.Delete(generalContent);
             return new SuccessResult(Messages.GeneralContentDeleteFromDatabase);
         }

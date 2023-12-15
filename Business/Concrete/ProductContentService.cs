@@ -33,6 +33,10 @@ namespace Business.Concrete
         public IResult HardDelete(int productContentId)
         {
             ProductContent productContent = _productContentDal.Get(p => p.Id == productContentId);
+            if(productContent is null)
+            {
+                return new ErrorResult(Messages.NoDataOnThisId);
+            }
             _productContentDal.Delete(productContent);
             return new SuccessResult(Messages.ProductContentDeleteFromDatabase);
         }

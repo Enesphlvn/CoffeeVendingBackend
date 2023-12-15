@@ -1,5 +1,4 @@
 ﻿using Core.Entities.Abstract;
-using System.Text.Json.Serialization;
 
 namespace Entities.DTOs.ProductContent
 {

@@ -36,6 +36,10 @@ namespace Business.Concrete
         public IResult HardDelete(int orderId)
         {
             Order order = _orderDal.Get(o => o.Id == orderId);
+            if(order is null)
+            {
+                return new ErrorResult(Messages.NoDataOnThisId);
+            }
             _orderDal.Delete(order);
             return new SuccessResult(Messages.OrderDeleteFromDatabase);
         }

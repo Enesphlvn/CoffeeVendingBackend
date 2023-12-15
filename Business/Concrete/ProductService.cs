@@ -40,6 +40,10 @@ namespace Business.Concrete
         public IResult HardDelete(int productId)
         {
             Product product = _productDal.Get(p => p.Id == productId);
+            if(product is null)
+            {
+                return new ErrorResult(Messages.NoDataOnThisId);
+            }
             _productDal.Delete(product);
             return new SuccessResult(Messages.ProductDeleteFromDatabase);
         }
@@ -89,7 +93,7 @@ namespace Business.Concrete
 
             if (product is null)
             {
-                return new ErrorResult();
+                return new ErrorResult(Messages.ProductNotFound);
             }
 
             product.IsStatus = false;

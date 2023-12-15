@@ -1,8 +1,9 @@
-﻿using Core.Entities.Abstract;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Core.Entities.Concrete
 {
-    public class User : IEntity
+    [Table("Users")]
+    public class User : BaseEntity
     {
         public int Id { get; set; }
         public string FirstName { get; set; }
@@ -10,6 +11,5 @@ namespace Core.Entities.Concrete
         public string Email { get; set; }
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
-        public bool Status { get; set; }
     }
 }
