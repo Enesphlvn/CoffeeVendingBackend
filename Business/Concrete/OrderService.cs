@@ -3,6 +3,7 @@ using Business.Abstract;
 using Business.Constans;
 using Business.ValidationRules.FluentValidation.Order;
 using Core.Aspects.Autofac.Validation;
+using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -16,17 +17,24 @@ namespace Business.Concrete
         private readonly IMapper _mapper;
         IOrderDal _orderDal;
         IProductDal _productDal;
+        IUserDal _userDal;
 
-        public OrderService(IOrderDal orderDal, IProductDal productDal, IMapper mapper)
+        public OrderService(IOrderDal orderDal, IProductDal productDal, IMapper mapper, IUserDal userDal)
         {
             _orderDal = orderDal;
             _productDal = productDal;
             _mapper = mapper;
+            _userDal = userDal;
         }
 
         [ValidationAspect(typeof(CreateOrderValidator))]
         public IResult Add(CreateOrderDto orderDto)
         {
+            IResult userExists = BusinessRules.Run(UserExists(orderDto.UserId), ProductExists(orderDto.ProductId));
+            if (!userExists.Success)
+            {
+                return new ErrorResult(userExists.Message);
+            }
             var order = _mapper.Map<Order>(orderDto);
 
             _orderDal.Add(order);
@@ -106,6 +114,26 @@ namespace Business.Concrete
         public IDataResult<List<GetOrderDetailDto>> GetOrderDetails()
         {
             return new SuccessDataResult<List<GetOrderDetailDto>>(_orderDal.GetOrderDetails(), Messages.OrdersListed);
+        }
+
+        private IResult UserExists(int userId)
+        {
+            var checkUser = _userDal.Get(u => u.Id == userId);
+            if(checkUser is null)
+            {
+                return new ErrorResult(Messages.UserIsNull);
+            }
+            return new SuccessResult();
+        }
+
+        private IResult ProductExists(int productId)
+        {
+            var checkProduct = _productDal.Get(o => o.Id == productId);
+            if (checkProduct is null)
+            {
+                return new ErrorResult(Messages.ProductIsNull);
+            }
+            return new SuccessResult();
         }
     }
 }

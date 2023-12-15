@@ -14,12 +14,15 @@ namespace DataAccess.Concrete.EntityFramework
                 var result = from o in context.Orders
                              join p in context.Products
                              on o.ProductId equals p.Id
+                             join u in context.Users
+                             on o.UserId equals u.Id
                              select new GetOrderDetailDto
                              {
                                  Id = o.Id,
                                  ProductName = p.Name,
                                  AmountPaid = o.AmountPaid,
-                                 RefundPaid = o.RefundPaid
+                                 RefundPaid = o.RefundPaid,
+                                 UserName = (u.FirstName + " " + u.LastName)
                              };
                 return result.ToList();
             }

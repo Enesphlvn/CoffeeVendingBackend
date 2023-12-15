@@ -1,10 +1,14 @@
-﻿namespace Entities.DTOs.User
+﻿using Core.Entities.Abstract;
+
+namespace Entities.DTOs.User
 {
-    public class GetUserByMailDto
+    public class GetUserByMailDto : IDto
     {
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
+        public byte[] PasswordHash { get; set; }
+        public byte[] PasswordSalt { get; set; }
     }
 }

@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using Business.Abstract;
 using Business.Constans;
+using Business.ValidationRules.FluentValidation.Product;
+using Business.ValidationRules.FluentValidation.User;
+using Core.Aspects.Autofac.Validation;
 using Core.Entities.Concrete;
+using Core.Utilities.Business;
 using Core.Utilities.Results;
 using Core.Utilities.Security;
 using Core.Utilities.Security.Hashing;
@@ -29,28 +33,32 @@ namespace Business.Concrete
             return new SuccessDataResult<List<OperationClaim>>(_userDal.GetClaims(user));
         }
 
+        [ValidationAspect(typeof(LoginUserValidator))]
         public IDataResult<User> Login(LoginUserDto loginUserDto)
         {
-            var userToCheck = GetByMail(loginUserDto.Email);
-            if (userToCheck.Data == null)
+            var userToCheckResult = GetByMail(loginUserDto.Email);
+            if (userToCheckResult.Data is null)
             {
-                return new ErrorDataResult<User>(Messages.UserNotFound);
+                return new ErrorDataResult<User>(Messages.MailNotFound);
             }
 
-            if (!HashingHelper.VerifyPasswordHash(loginUserDto.Password, userToCheck.Data.PasswordHash, userToCheck.Data.PasswordSalt))
+            var userToCheck = userToCheckResult.Data;
+
+            if (!HashingHelper.VerifyPasswordHash(loginUserDto.Password, userToCheck.PasswordHash, userToCheck.PasswordSalt))
             {
                 return new ErrorDataResult<User>(Messages.PasswordError);
             }
 
-            return new SuccessDataResult<User>(userToCheck.Data, Messages.SuccessfulLogin);
+            return new SuccessDataResult<User>(userToCheck, Messages.SuccessfulLogin);
         }
 
+        [ValidationAspect(typeof(RegisterUserValidator))]
         public IDataResult<User> Register(RegisterUserDto registerUserDto)
         {
-            var userExists = UserExists(registerUserDto.Email);
-            if (!userExists.Success)
+            var result = UserExists(registerUserDto.Email);
+            if (!result.Success)
             {
-                return new ErrorDataResult<User>(userExists.Message);
+                return new ErrorDataResult<User>(result.Message);
             }
             var user = CreateUserWithHashedPassword(registerUserDto);
 

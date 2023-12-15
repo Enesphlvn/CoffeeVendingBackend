@@ -30,7 +30,6 @@ namespace WebAPI.Controllers
         public IActionResult GetByMail(string email)
         {
             var result = _userService.GetByMail(email);
-
             if (result.Success)
             {
                 return Ok(result.Data);
@@ -64,7 +63,18 @@ namespace WebAPI.Controllers
         public IActionResult Update(UpdateUserDto updateUserDto)
         {
             var result = _userService.Update(updateUserDto);
-            if(result.Success)
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpPut("updatepassword")]
+        public IActionResult UpdatePassword(PasswordUpdateDto password)
+        {
+            var result = _userService.UpdatePassword(password);
+            if (result.Success)
             {
                 return Ok(result);
             }

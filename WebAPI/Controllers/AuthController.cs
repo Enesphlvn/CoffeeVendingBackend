@@ -20,7 +20,7 @@ namespace WebAPI.Controllers
         {
             var registerResult = _authService.Register(registerUserDto);
             var result = _authService.CreateAccessToken(registerResult.Data);
-            if(result.Success)
+            if (result.Success)
             {
                 return Ok(result.Data);
             }
@@ -30,34 +30,17 @@ namespace WebAPI.Controllers
         [HttpPost("login")]
         public IActionResult Login(LoginUserDto loginUserDto)
         {
-            var userToLogin = _authService.Login(loginUserDto);
-            if (!userToLogin.Success)
-            {
-                return BadRequest(userToLogin.Message);
-            }
-
-            var result = _authService.CreateAccessToken(userToLogin.Data);
+            var result = _authService.Login(loginUserDto);
             if (result.Success)
             {
-                return Ok(result.Data);
+                var accessToken = _authService.CreateAccessToken(result.Data);
+                if (accessToken.Success)
+                {
+                    return Ok(accessToken.Data);
+                }
+                return BadRequest(accessToken.Message);
             }
-
             return BadRequest(result.Message);
-        }
-
-        [HttpGet("getbymail")]
-        public IActionResult GetByMail(string email)
-        {
-            var result = _authService.GetByMail(email);
-
-            if (result.Success)
-            {
-                return Ok(result.Data);
-            }
-            else
-            {
-                return BadRequest(result.Message);
-            }
         }
     }
 }

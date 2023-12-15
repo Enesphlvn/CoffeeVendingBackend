@@ -12,6 +12,6 @@ namespace Business.Abstract
         IResult Update(UpdateUserDto updateUserDto);
         IResult Delete(int userId);
         IResult HardDelete(int userId);
-        IResult UpdatePassword(User user);
+        IResult UpdatePassword(PasswordUpdateDto password);
     }
 }

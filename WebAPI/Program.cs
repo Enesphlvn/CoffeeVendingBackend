@@ -4,7 +4,6 @@ using Business.DependecyResolvers.Autofac;
 using Business.Mapping.Profiles.ProductProfiles;
 using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
-using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 

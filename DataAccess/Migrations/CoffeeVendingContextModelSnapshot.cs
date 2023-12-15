@@ -165,6 +165,9 @@ namespace DataAccess.Migrations
                     b.Property<int>("RefundPaid")
                         .HasColumnType("integer");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.ToTable("Orders");

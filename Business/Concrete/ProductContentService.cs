@@ -3,6 +3,7 @@ using Business.Abstract;
 using Business.Constans;
 using Business.ValidationRules.FluentValidation.ProductContent;
 using Core.Aspects.Autofac.Validation;
+using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -14,16 +15,23 @@ namespace Business.Concrete
     {
         private readonly IMapper _mapper;
         IProductContentDal _productContentDal;
+        IGeneralContentDal _GeneralContentDal;
 
-        public ProductContentService(IProductContentDal productContentDal, IMapper mapper)
+        public ProductContentService(IProductContentDal productContentDal, IMapper mapper, IGeneralContentDal GeneralContentDal)
         {
             _productContentDal = productContentDal;
+            _GeneralContentDal = GeneralContentDal;
             _mapper = mapper;
         }
 
         [ValidationAspect(typeof(CreateProductContentValidator))]
         public IResult Add(CreateProductContentDto productContentDto)
         {
+            IResult generalContentExists = BusinessRules.Run(GeneralContentExists(productContentDto.GeneralContentId));
+            if(!generalContentExists.Success)
+            {
+                return new ErrorResult(generalContentExists.Message);
+            }
             var productContent = _mapper.Map<ProductContent>(productContentDto);
 
             _productContentDal.Add(productContent);
@@ -99,6 +107,16 @@ namespace Business.Concrete
         public IDataResult<List<GetProductContentDetailDto>> GetProductContentDetails()
         {
             return new SuccessDataResult<List<GetProductContentDetailDto>>(_productContentDal.GetProductContentDetails(), Messages.ProductContentsListed);
+        }
+
+        private IResult GeneralContentExists(int generalContentId)
+        {
+            var result = _GeneralContentDal.Get(g => g.Id == generalContentId);
+            if(result is null)
+            {
+                return new ErrorResult(Messages.GeneralContentIsNull);
+            }
+            return new SuccessResult();
         }
     }
 }

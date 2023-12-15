@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using Business.Abstract;
 using Business.Constans;
+using Business.ValidationRules.FluentValidation.User;
+using Core.Aspects.Autofac.Validation;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
+using Core.Utilities.Security.Hashing;
 using DataAccess.Abstract;
 using Entities.DTOs.User;
 
@@ -84,6 +87,7 @@ namespace Business.Concrete
             return new SuccessResult(Messages.UserDeleteFromDatabase);
         }
 
+        [ValidationAspect(typeof(UpdateUserValidator))]
         public IResult Update(UpdateUserDto updateUserDto)
         {
             User user = _userDal.Get(u => u.Id == updateUserDto.Id);
@@ -100,9 +104,31 @@ namespace Business.Concrete
             return new SuccessResult(Messages.UserUpdated);
         }
 
-        public IResult UpdatePassword(User user)
+        [ValidationAspect(typeof(PasswordUpdateValidator))]
+        public IResult UpdatePassword(PasswordUpdateDto password)
         {
-            throw new NotImplementedException();
+            var userToCheckResult = GetByMail(password.Email);
+            if(userToCheckResult.Data is null)
+            {
+                return new ErrorResult(Messages.MailNotFound);
+            }
+
+            var userToCheck = _mapper.Map<User>(userToCheckResult.Data);
+
+            if (!HashingHelper.VerifyPasswordHash(password.OldPassword, userToCheck.PasswordHash, userToCheck.PasswordSalt))
+            {
+                return new ErrorResult(Messages.OldPasswordError);
+            }
+
+            byte[] passwordHash, passwordSalt;
+            HashingHelper.CreatePasswordHash(password.NewPassword,out passwordHash,out passwordSalt);
+
+            userToCheck.PasswordHash = passwordHash;
+            userToCheck.PasswordSalt = passwordSalt;
+
+            _userDal.Update(userToCheck);
+
+            return new SuccessResult(Messages.PasswordUpdated);
         }
     }
 }

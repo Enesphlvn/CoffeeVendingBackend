@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Constans;
 using Business.ValidationRules.FluentValidation.Product;
 using Core.Aspects.Autofac.Validation;
@@ -34,7 +35,8 @@ namespace Business.Concrete
                 _productDal.Add(product);
                 return new SuccessResult(Messages.ProductAdded);
             }
-            return result;
+
+            return new ErrorResult(result.Message);
         }
 
         public IResult HardDelete(int productId)
@@ -71,6 +73,7 @@ namespace Business.Concrete
             return new SuccessDataResult<GetProductByIdDto>(productDtos, Messages.ProductIdListed);
         }
 
+        //[SecuredOperation("admin")]
         [ValidationAspect(typeof(UpdateProductValidator))]
         public IResult Update(UpdateProductDto productDto)
         {
@@ -87,6 +90,7 @@ namespace Business.Concrete
             return new SuccessResult(Messages.ProductUpdated);
         }
 
+        [SecuredOperation("admin")]
         public IResult Delete(int productId)
         {
             Product product = _productDal.Get(p => p.Id == productId);
