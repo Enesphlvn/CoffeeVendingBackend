@@ -32,9 +32,9 @@ namespace WebAPI.Controllers
             var result = _userService.GetByMail(email);
             if (result.Success)
             {
-                return Ok(result.Data);
+                return Ok(result);
             }
-            return BadRequest(result.Message);
+            return BadRequest(result);
         }
 
         [HttpGet("getbyid")]
@@ -43,9 +43,9 @@ namespace WebAPI.Controllers
             var result = _userService.GetById(userId);
             if (result.Success)
             {
-                return Ok(result.Data);
+                return Ok(result);
             }
-            return BadRequest(result.Message);
+            return BadRequest(result);
         }
 
         [HttpDelete("harddelete")]

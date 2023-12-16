@@ -7,8 +7,6 @@ using Core.Entities.Concrete;
 using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
-using DataAccess.Concrete.EntityFramework;
-using Entities.Concrete;
 using Entities.DTOs.OperationClaim;
 
 namespace Business.Concrete

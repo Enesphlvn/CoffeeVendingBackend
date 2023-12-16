@@ -30,11 +30,12 @@ namespace Business.Concrete
         [ValidationAspect(typeof(CreateOrderValidator))]
         public IResult Add(CreateOrderDto orderDto)
         {
-            IResult userExists = BusinessRules.Run(UserExists(orderDto.UserId), ProductExists(orderDto.ProductId));
+            IResult userExists = BusinessRules.Run(CheckIfUserIdExists(orderDto.UserId), CheckIfProductIdExists(orderDto.ProductId));
             if (!userExists.Success)
             {
                 return new ErrorResult(userExists.Message);
             }
+
             var order = _mapper.Map<Order>(orderDto);
 
             _orderDal.Add(order);
@@ -75,13 +76,18 @@ namespace Business.Concrete
         public IResult Update(UpdateOrderDto orderDto)
         {
             var order = _orderDal.Get(o => o.Id == orderDto.Id);
-
             if (order is null)
             {
                 return new ErrorResult(Messages.OrderIsNull);
             }
 
             _mapper.Map(orderDto, order);
+
+            IResult result = BusinessRules.Run(CheckIfProductIdExists(order.ProductId), CheckIfUserIdExists(order.UserId));
+            if (!result.Success)
+            {
+                return new ErrorResult(result.Message);
+            }
 
             _orderDal.Update(order);
             return new SuccessResult(Messages.OrderUpdated);
@@ -116,7 +122,7 @@ namespace Business.Concrete
             return new SuccessDataResult<List<GetOrderDetailDto>>(_orderDal.GetOrderDetails(), Messages.OrdersListed);
         }
 
-        private IResult UserExists(int userId)
+        private IResult CheckIfUserIdExists(int userId)
         {
             var checkUser = _userDal.Get(u => u.Id == userId);
             if(checkUser is null)
@@ -126,7 +132,7 @@ namespace Business.Concrete
             return new SuccessResult();
         }
 
-        private IResult ProductExists(int productId)
+        private IResult CheckIfProductIdExists(int productId)
         {
             var checkProduct = _productDal.Get(o => o.Id == productId);
             if (checkProduct is null)

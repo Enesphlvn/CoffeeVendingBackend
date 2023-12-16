@@ -67,7 +67,7 @@ namespace Business.Concrete
             return new SuccessDataResult<User>(user, Messages.UserRegistered);
         }
 
-        public IDataResult<AccessToken> CreateAccessToken(User user)
+        public IDataResult<AccessToken> CreateAccessTokenForLogin(User user)
         {
             var claims = GetClaims(user);
             var accessToken = _tokenHelper.CreateToken(user, claims.Data);
@@ -110,6 +110,13 @@ namespace Business.Concrete
                 return new ErrorResult(Messages.UserAlreadyExists);
             }
             return new SuccessResult();
+        }
+
+        public IDataResult<AccessToken> CreateAccessTokenForRegister(User user)
+        {
+            var claims = GetClaims(user);
+            var accessToken = _tokenHelper.CreateToken(user, claims.Data);
+            return new SuccessDataResult<AccessToken>(accessToken, Messages.RegisterCreateSuccessful);
         }
     }
 }

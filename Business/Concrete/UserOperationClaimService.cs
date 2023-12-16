@@ -16,8 +16,8 @@ namespace Business.Concrete
     {
         private readonly IMapper _mapper;
         IUserOperationClaimDal _userOperationClaimDal;
-        IUserDal _userDal;
         IOperationClaimDal _operationClaimDal;
+        IUserDal _userDal;
 
         public UserOperationClaimService(IUserOperationClaimDal userOperationClaimDal, IMapper mapper, IUserDal userDal, IOperationClaimDal operationClaimDal)
         {
@@ -30,19 +30,13 @@ namespace Business.Concrete
         [ValidationAspect(typeof(CreateUserOperationClaimValidator))]
         public IResult Add(CreateUserOperationClaimDto userOperationClaimDto)
         {
-            var userExists = _userDal.Get(u => u.Id == userOperationClaimDto.UserId);
-            if (userExists is null)
-            {
-                return new ErrorResult(Messages.UserIsNull);
-            }
-
-            var operationClaimExists = _operationClaimDal.Get(o => o.Id == userOperationClaimDto.OperationClaimId);
-            if (operationClaimExists is null)
-            {
-                return new ErrorResult(Messages.OperationClaimIsNull);
-            }
-
             var userOperationClaim = _mapper.Map<UserOperationClaim>(userOperationClaimDto);
+
+            IResult result = BusinessRules.Run(CheckIfOperationClaimIdExists(userOperationClaim.OperationClaimId), CheckIfUserIdExists(userOperationClaim.UserId));
+            if(!result.Success)
+            {
+                return new ErrorResult(result.Message);
+            }
 
             _userOperationClaimDal.Add(userOperationClaim);
             return new SuccessResult(Messages.UserOperationClaimAdded);
@@ -97,22 +91,36 @@ namespace Business.Concrete
                 return new ErrorResult(Messages.UserOperationClaimIsNull);
             }
 
-            var userExists = _userDal.Get(u => u.Id == userOperationClaimDto.UserId);
-            if (userExists is null)
-            {
-                return new ErrorResult(Messages.UserIsNull);
-            }
-
-            var operationClaimExists = _operationClaimDal.Get(o => o.Id == userOperationClaimDto.OperationClaimId);
-            if (operationClaimExists is null)
-            {
-                return new ErrorResult(Messages.OperationClaimIsNull);
-            }
-
             _mapper.Map(userOperationClaimDto, userOperationClaim);
+
+            IResult result = BusinessRules.Run(CheckIfOperationClaimIdExists(userOperationClaim.OperationClaimId), CheckIfUserIdExists(userOperationClaim.UserId));
+            if(!result.Success)
+            {
+                return new ErrorResult(result.Message);
+            }
 
             _userOperationClaimDal.Update(userOperationClaim);
             return new SuccessResult(Messages.UserOperationClaimUpdated);
+        }
+
+        private IResult CheckIfUserIdExists(int userId)
+        {
+            var result = _userDal.Get(u => u.Id == userId);
+            if (result is null)
+            {
+                return new ErrorResult(Messages.UserIsNull);
+            }
+            return new SuccessResult();
+        }
+
+        private IResult CheckIfOperationClaimIdExists(int operationClaimId)
+        {
+            var result = _operationClaimDal.Get(o => o.Id == operationClaimId);
+            if (result is null)
+            {
+                return new ErrorResult(Messages.OperationClaimIsNull);
+            }
+            return new SuccessResult();
         }
     }
 }

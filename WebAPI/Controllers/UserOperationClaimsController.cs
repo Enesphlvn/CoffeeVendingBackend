@@ -23,7 +23,7 @@ namespace WebAPI.Controllers
             {
                 return Ok(result);
             }
-            return BadRequest(result);
+            return BadRequest();
         }
 
         [HttpGet("getuseroperationclaimdetail")]
@@ -34,7 +34,7 @@ namespace WebAPI.Controllers
             {
                 return Ok(result);
             }
-            return BadRequest(result);
+            return BadRequest();
         }
 
         [HttpPost("add")]

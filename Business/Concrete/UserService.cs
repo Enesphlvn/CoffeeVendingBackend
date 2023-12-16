@@ -72,7 +72,7 @@ namespace Business.Concrete
 
             var userDto = _mapper.Map<GetUserByMailDto>(user);
 
-            return new SuccessDataResult<GetUserByMailDto>(userDto);
+            return new SuccessDataResult<GetUserByMailDto>(userDto, Messages.UserMailListed);
         }
 
         public IResult HardDelete(int userId)

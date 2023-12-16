@@ -16,23 +16,26 @@ namespace Business.Concrete
         private readonly IMapper _mapper;
         IProductContentDal _productContentDal;
         IGeneralContentDal _GeneralContentDal;
+        IProductDal _productDal;
 
-        public ProductContentService(IProductContentDal productContentDal, IMapper mapper, IGeneralContentDal GeneralContentDal)
+        public ProductContentService(IProductContentDal productContentDal, IMapper mapper, IGeneralContentDal GeneralContentDal, IProductDal productDal)
         {
             _productContentDal = productContentDal;
             _GeneralContentDal = GeneralContentDal;
+            _productDal = productDal;
             _mapper = mapper;
         }
 
         [ValidationAspect(typeof(CreateProductContentValidator))]
         public IResult Add(CreateProductContentDto productContentDto)
         {
-            IResult generalContentExists = BusinessRules.Run(GeneralContentExists(productContentDto.GeneralContentId));
+            var productContent = _mapper.Map<ProductContent>(productContentDto);
+
+            IResult generalContentExists = BusinessRules.Run(CheckIfGeneralContentIdExists(productContent.GeneralContentId), CheckIfProductIdExists(productContent.ProductId));
             if(!generalContentExists.Success)
             {
                 return new ErrorResult(generalContentExists.Message);
             }
-            var productContent = _mapper.Map<ProductContent>(productContentDto);
 
             _productContentDal.Add(productContent);
             return new SuccessResult(Messages.ProductContentAdded);
@@ -84,6 +87,12 @@ namespace Business.Concrete
 
             _mapper.Map(productContentDto, productContent);
 
+            IResult result = BusinessRules.Run(CheckIfGeneralContentIdExists(productContent.GeneralContentId), CheckIfProductIdExists(productContent.ProductId));
+            if(!result.Success)
+            {
+                return new ErrorResult(result.Message);
+            }
+
             _productContentDal.Update(productContent);
             return new SuccessResult(Messages.ProductContentUpdated);
         }
@@ -109,12 +118,22 @@ namespace Business.Concrete
             return new SuccessDataResult<List<GetProductContentDetailDto>>(_productContentDal.GetProductContentDetails(), Messages.ProductContentsListed);
         }
 
-        private IResult GeneralContentExists(int generalContentId)
+        private IResult CheckIfGeneralContentIdExists(int generalContentId)
         {
             var result = _GeneralContentDal.Get(g => g.Id == generalContentId);
             if(result is null)
             {
                 return new ErrorResult(Messages.GeneralContentIsNull);
+            }
+            return new SuccessResult();
+        }
+
+        private IResult CheckIfProductIdExists(int productId)
+        {
+            var product = _productDal.Get(p => p.Id == productId);
+            if(product is null)
+            {
+                return new ErrorResult(Messages.ProductIsNull);
             }
             return new SuccessResult();
         }

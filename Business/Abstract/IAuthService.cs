@@ -10,7 +10,8 @@ namespace Business.Abstract
         IDataResult<User> GetByMail(string email);
         IDataResult<User> Register(RegisterUserDto registerUserDto);
         IDataResult<User> Login(LoginUserDto loginUserDto);
-        IDataResult<AccessToken> CreateAccessToken(User user);
+        IDataResult<AccessToken> CreateAccessTokenForLogin(User user);
         IDataResult<List<OperationClaim>> GetClaims(User user);
+        IDataResult<AccessToken> CreateAccessTokenForRegister(User user);
     }
 }
