@@ -40,7 +40,7 @@ namespace Business.Concrete
 
         public IDataResult<List<GetUserDetailDto>> GetAll()
         {
-            List<User> user = _userDal.GetAll();
+            List<User> user = _userDal.GetAll(u => u.IsStatus);
 
             List<GetUserDetailDto> userDto = _mapper.Map<List<GetUserDetailDto>>(user);
 

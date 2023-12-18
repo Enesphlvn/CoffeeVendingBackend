@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using Business.Abstract;
 using Business.Constans;
-using Business.ValidationRules.FluentValidation.Product;
 using Business.ValidationRules.FluentValidation.User;
 using Core.Aspects.Autofac.Validation;
 using Core.Entities.Concrete;
-using Core.Utilities.Business;
 using Core.Utilities.Results;
 using Core.Utilities.Security;
 using Core.Utilities.Security.Hashing;
@@ -67,11 +65,11 @@ namespace Business.Concrete
             return new SuccessDataResult<User>(user, Messages.UserRegistered);
         }
 
-        public IDataResult<AccessToken> CreateAccessTokenForLogin(User user)
+        public IDataResult<AccessToken> CreateAccessToken(User user)
         {
             var claims = GetClaims(user);
             var accessToken = _tokenHelper.CreateToken(user, claims.Data);
-            return new SuccessDataResult<AccessToken>(accessToken, Messages.AccessTokenCreated);
+            return new SuccessDataResult<AccessToken>(accessToken);
         }
 
         public IDataResult<User> GetByMail(string email)
@@ -110,13 +108,6 @@ namespace Business.Concrete
                 return new ErrorResult(Messages.UserAlreadyExists);
             }
             return new SuccessResult();
-        }
-
-        public IDataResult<AccessToken> CreateAccessTokenForRegister(User user)
-        {
-            var claims = GetClaims(user);
-            var accessToken = _tokenHelper.CreateToken(user, claims.Data);
-            return new SuccessDataResult<AccessToken>(accessToken, Messages.RegisterCreateSuccessful);
         }
     }
 }

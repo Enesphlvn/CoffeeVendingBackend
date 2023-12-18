@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Constans;
 using Business.ValidationRules.FluentValidation.Product;
 using Core.Aspects.Autofac.Validation;
@@ -49,9 +50,10 @@ namespace Business.Concrete
             return new SuccessResult(Messages.ProductDeleteFromDatabase);
         }
 
+        //[SecuredOperation("admin")]
         public IDataResult<List<GetProductDto>> GetAll()
         {
-            List<Product> products = _productDal.GetAll();
+            List<Product> products = _productDal.GetAll(p => p.IsStatus);
 
             List<GetProductDto> productDtos = _mapper.Map<List<GetProductDto>>(products);
 
@@ -72,7 +74,6 @@ namespace Business.Concrete
             return new SuccessDataResult<GetProductByIdDto>(productDtos, Messages.ProductIdListed);
         }
 
-        //[SecuredOperation("admin")]
         [ValidationAspect(typeof(UpdateProductValidator))]
         public IResult Update(UpdateProductDto productDto)
         {

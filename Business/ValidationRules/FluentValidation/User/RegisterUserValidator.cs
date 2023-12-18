@@ -21,6 +21,8 @@ namespace Business.ValidationRules.FluentValidation.User
             RuleFor(u => u.Password).NotEmpty()
                 .MinimumLength(5)
                 .MaximumLength(100);
+
+            
         }
     }
 }

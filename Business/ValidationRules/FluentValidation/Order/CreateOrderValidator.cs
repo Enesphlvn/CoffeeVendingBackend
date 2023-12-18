@@ -15,10 +15,6 @@ namespace Business.ValidationRules.FluentValidation.Order
 
             RuleFor(o => o.AmountPaid).NotEmpty()
                 .GreaterThan(0);
-
-            RuleFor(o => o.RefundPaid).GreaterThanOrEqualTo(0)
-                .LessThan(o => o.AmountPaid)
-                .When(o => o.AmountPaid > 0);
         }
     }
 }

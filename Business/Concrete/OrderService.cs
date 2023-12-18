@@ -15,14 +15,18 @@ namespace Business.Concrete
     public class OrderService : IOrderService
     {
         private readonly IMapper _mapper;
-        IOrderDal _orderDal;
+        IGeneralContentDal _generalContentDal;
+        IProductContentDal _productContentDal;
         IProductDal _productDal;
+        IOrderDal _orderDal;
         IUserDal _userDal;
 
-        public OrderService(IOrderDal orderDal, IProductDal productDal, IMapper mapper, IUserDal userDal)
+        public OrderService(IOrderDal orderDal, IProductDal productDal, IMapper mapper, IUserDal userDal, IProductContentDal productContentDal, IGeneralContentDal generalContentDal)
         {
-            _orderDal = orderDal;
+            _generalContentDal = generalContentDal;
+            _productContentDal = productContentDal;
             _productDal = productDal;
+            _orderDal = orderDal;
             _mapper = mapper;
             _userDal = userDal;
         }
@@ -38,14 +42,29 @@ namespace Business.Concrete
 
             var order = _mapper.Map<Order>(orderDto);
 
+            var calculateResult = CalculateRefundPaid(order.ProductId, order.AmountPaid);
+            if(!calculateResult.Success)
+            {
+                return new ErrorResult(calculateResult.Message);
+            }
+
             _orderDal.Add(order);
-            return new SuccessResult(Messages.OrderAdded);
+
+            var products = _productDal.GetAll(p => p.Id == order.ProductId).ToList();
+
+            var updateResult = UpdateStockForOrderProducts(products);
+
+            if (!updateResult.Success)
+            {
+                return new ErrorResult(updateResult.Message);
+            }
+            return new SuccessResult(Messages.OrderCompleted + $" Para üstünüz: {order.RefundPaid}₺.");
         }
 
         public IResult HardDelete(int orderId)
         {
             Order order = _orderDal.Get(o => o.Id == orderId);
-            if(order is null)
+            if (order is null)
             {
                 return new ErrorResult(Messages.NoDataOnThisId);
             }
@@ -110,7 +129,7 @@ namespace Business.Concrete
 
         public IDataResult<List<GetOrderDto>> GetAll()
         {
-            List<Order> orders = _orderDal.GetAll();
+            List<Order> orders = _orderDal.GetAll(o => o.IsStatus);
 
             List<GetOrderDto> orderDtos = _mapper.Map<List<GetOrderDto>>(orders);
 
@@ -125,7 +144,7 @@ namespace Business.Concrete
         private IResult CheckIfUserIdExists(int userId)
         {
             var checkUser = _userDal.Get(u => u.Id == userId);
-            if(checkUser is null)
+            if (checkUser is null)
             {
                 return new ErrorResult(Messages.UserIsNull);
             }
@@ -139,6 +158,59 @@ namespace Business.Concrete
             {
                 return new ErrorResult(Messages.ProductIsNull);
             }
+            return new SuccessResult();
+        }
+
+        private IResult UpdateStockForOrderProducts(List<Product> products)
+        {
+            foreach (var product in products)
+            {
+                UpdateStockForProduct(product);
+            }
+            return new SuccessResult();
+        }
+
+        private IResult UpdateStockForProduct(Product product)
+        {
+            var productContents = _productContentDal.GetAll(pc => pc.ProductId == product.Id);
+            foreach (var productContent in productContents)
+            {
+                UpdateStockForProductContent(productContent);
+            }
+            return new SuccessResult();
+        }
+
+        private IResult UpdateStockForProductContent(ProductContent productContent)
+        {
+            var generalContent = _generalContentDal.Get(gc => gc.Id == productContent.GeneralContentId);
+            if(generalContent is null)
+            {
+                return new ErrorResult(Messages.GeneralContentNotFoundForProduct);
+            }
+
+            if(generalContent.Value < productContent.Unit)
+            {
+                return new ErrorResult(Messages.NoGeneralContentInStock);
+            }
+
+            if(generalContent.Value < 500)
+            {
+                generalContent.IsCritialLevel = true;
+            }
+
+            generalContent.Value -= productContent.Unit;
+            _generalContentDal.Update(generalContent);
+            return new SuccessResult();
+        }
+
+        private IResult CalculateRefundPaid(int productId, int amountPaid)
+        {
+            int productPrice = _productDal.Get(p => p.Id == productId)?.Price ?? 0;
+            if(amountPaid < productPrice)
+            {
+                return new ErrorResult(Messages.AmountPaidInsufficient);
+            }
+            int refundPaid = amountPaid - productPrice;
             return new SuccessResult();
         }
     }

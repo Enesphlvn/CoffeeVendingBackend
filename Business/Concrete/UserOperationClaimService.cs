@@ -59,7 +59,7 @@ namespace Business.Concrete
 
         public IDataResult<List<GetUserOperationClaimDto>> GetAll()
         {
-            List<UserOperationClaim> userOperationClaims = _userOperationClaimDal.GetAll();
+            List<UserOperationClaim> userOperationClaims = _userOperationClaimDal.GetAll(uoc => uoc.IsStatus);
 
             List<GetUserOperationClaimDto> userOperationClaimDtos = _mapper.Map<List<GetUserOperationClaimDto>>(userOperationClaims);
 

@@ -9,7 +9,7 @@ using Core.Utilities.Security;
 using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
 
-namespace Business.DependecyResolvers.Autofac
+namespace Business.DependencyResolvers.Autofac
 {
     public class AutofacBusinessModule : Module
     {

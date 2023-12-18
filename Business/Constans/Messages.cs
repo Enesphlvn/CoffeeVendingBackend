@@ -32,13 +32,18 @@
         public static string ProductNotFound = "Ürün bulunamadı";
 
 
-        public static string OrderAdded = "Sipariş eklendi";
+        public static string OrderCompleted = "Sipariş tamamlandı";
         public static string OrderUpdated = "Sipariş güncellendi";
         public static string OrderDeleted = "Sipariş silindi";
         public static string OrdersListed = "Siparişler listelendi";
         public static string OrderIdListed = "Id'si girilen sipariş listelendi";
         public static string OrderIsNull = "Girilen Id'de bir sipariş yok";
         public static string OrderDeleteFromDatabase = "Sipariş veritabanından silindi!";
+        public static string GeneralContentNotFoundForProduct = "Ürün için genel içerik bulunamadı";
+        public static string ProductContentNotFoundForProduct = "Ürün için içerik bulunamadı";
+        public static string NoGeneralContentInStock = "Kahve için gerekli malzemeler tükendi";
+        public static string CritialLevelGeneralContentInStock = "Kahve için gerekli malzemeler kritik seviyede!";
+        public static string AmountPaidInsufficient = "Ödenen para yetersiz!";
 
 
         public static string UsersListed = "Kullanıcılar listelendi";
@@ -82,6 +87,5 @@
         public static string SuccessfulLogin = "Sisteme giriş başarılı";
         public static string AuthorizationDenied = "Yetkiniz Yok";
         public static string RoleAdded = "Rol oluşturuldu";
-
     }
 }

@@ -53,7 +53,7 @@ namespace Business.Concrete
 
         public IDataResult<List<GetGeneralContentDto>> GetAll()
         {
-            List<GeneralContent> generalContents = _generalContentDal.GetAll();
+            List<GeneralContent> generalContents = _generalContentDal.GetAll(gc => gc.IsStatus);
 
             List<GetGeneralContentDto> generalContentDtos = _mapper.Map<List<GetGeneralContentDto>>(generalContents);
 
@@ -86,7 +86,10 @@ namespace Business.Concrete
 
             _mapper.Map(generalContentDto, generalContent);
 
+            CheckCriticalLevel(generalContent);
+
             _generalContentDal.Update(generalContent);
+
             return new SuccessResult(Messages.GeneralContentUpdated);
         }
 
@@ -114,6 +117,14 @@ namespace Business.Concrete
                 return new ErrorResult(Messages.GeneralContentNameAlreadyExists);
             }
             return new SuccessResult();
+        }
+
+        private void CheckCriticalLevel(GeneralContent generalContent)
+        {
+            if (generalContent.Value >= 500)
+            {
+                generalContent.IsCritialLevel = false;
+            }
         }
     }
 }

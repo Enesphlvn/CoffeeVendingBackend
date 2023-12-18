@@ -19,10 +19,10 @@ namespace WebAPI.Controllers
         public IActionResult Register(RegisterUserDto registerUserDto)
         {
             var registerResult = _authService.Register(registerUserDto);
-            var result = _authService.CreateAccessTokenForRegister(registerResult.Data);
+            var result = _authService.CreateAccessToken(registerResult.Data);
             if (result.Success)
             {
-                return Ok(result);
+                return Ok(new { Message = "Kaydınız başarılı bir şekilde oluşturuldu", Data = result.Data });
             }
             return BadRequest(result);
         }
@@ -30,17 +30,17 @@ namespace WebAPI.Controllers
         [HttpPost("login")]
         public IActionResult Login(LoginUserDto loginUserDto)
         {
-            var result = _authService.Login(loginUserDto);
-            if (result.Success)
+            var loginResult = _authService.Login(loginUserDto);
+            if (loginResult.Success)
             {
-                var accessToken = _authService.CreateAccessTokenForLogin(result.Data);
-                if (accessToken.Success)
+                var result = _authService.CreateAccessToken(loginResult.Data);
+                if (result.Success)
                 {
-                    return Ok(accessToken);
+                    return Ok(new { Message = "Sisteme giriş başarılı", Data = result.Data });
                 }
-                return BadRequest(accessToken);
+                return BadRequest(result);
             }
-            return BadRequest(result);
+            return BadRequest(loginResult);
         }
     }
 }

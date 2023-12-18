@@ -54,7 +54,7 @@ namespace Business.Concrete
 
         public IDataResult<List<GetProductContentDto>> GetAll()
         {
-            List<ProductContent> productContents = _productContentDal.GetAll();
+            List<ProductContent> productContents = _productContentDal.GetAll(pc => pc.IsStatus);
 
             List<GetProductContentDto> productContentDtos = _mapper.Map<List<GetProductContentDto>>(productContents);
 

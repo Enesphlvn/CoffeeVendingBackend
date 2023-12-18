@@ -54,7 +54,7 @@ namespace Business.Concrete
 
         public IDataResult<List<OperationClaimDetailDto>> GetAll()
         {
-            List<OperationClaim> operationClaims = _operationClaimDal.GetAll();
+            List<OperationClaim> operationClaims = _operationClaimDal.GetAll(oc => oc.IsStatus);
 
             List<OperationClaimDetailDto> operationClaimDtos = _mapper.Map<List<OperationClaimDetailDto>>(operationClaims);
             return new SuccessDataResult<List<OperationClaimDetailDto>>(operationClaimDtos, Messages.OperationClaimsListed);
