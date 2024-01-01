@@ -1,7 +1,5 @@
 ﻿using Business.Abstract;
-using Core.Entities.Concrete;
 using Entities.DTOs.OperationClaim;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers

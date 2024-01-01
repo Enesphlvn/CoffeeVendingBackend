@@ -26,17 +26,6 @@ namespace WebAPI.Controllers
             return BadRequest();
         }
 
-        [HttpGet("getuseroperationclaimdetail")]
-        public IActionResult GetUserOperationClaimDetails()
-        {
-            var result = _userOperationClaimService.GetUserOperationClaimDetails();
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest();
-        }
-
         [HttpPost("add")]
         public IActionResult Add(CreateUserOperationClaimDto userOperationClaimDto)
         {

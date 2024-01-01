@@ -7,7 +7,7 @@ namespace DataAccess.Concrete.EntityFramework
 {
     public class EfProductContentDal : EfEntityRepositoryBase<ProductContent, CoffeeVendingContext>, IProductContentDal
     {
-        public List<GetProductContentDetailDto> GetProductContentDetails()
+        public List<GetAllProductContentDto> GetProductContentDetails()
         {
             using (CoffeeVendingContext context = new CoffeeVendingContext())
             {
@@ -16,10 +16,13 @@ namespace DataAccess.Concrete.EntityFramework
                              on pc.ProductId equals p.Id
                              join gc in context.GeneralContents
                              on pc.GeneralContentId equals gc.Id
-                             select new GetProductContentDetailDto
+                             where pc.IsStatus == true
+                             select new GetAllProductContentDto
                              {
                                  Id = pc.Id,
+                                 ProductId = p.Id,
                                  ProductName = p.Name,
+                                 GeneralContentId = gc.Id,
                                  GeneralContentName = gc.Name,
                                  Unit = pc.Unit
                              };

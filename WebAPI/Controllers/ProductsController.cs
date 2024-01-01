@@ -38,6 +38,18 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
+        [HttpGet("getproductsbygeneralcontentid")]
+        public IActionResult GetProductsByGeneralContentId(int generalContentId)
+        {
+            var result = _productService.GetProductsByGeneralContentId(generalContentId);
+
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
         [HttpPost("add")]
         public IActionResult Add(CreateProductDto productDto)
         {

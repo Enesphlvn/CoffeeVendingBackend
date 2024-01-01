@@ -32,7 +32,7 @@ namespace Business.Concrete
             var productContent = _mapper.Map<ProductContent>(productContentDto);
 
             IResult generalContentExists = BusinessRules.Run(CheckIfGeneralContentIdExists(productContent.GeneralContentId), CheckIfProductIdExists(productContent.ProductId));
-            if(!generalContentExists.Success)
+            if(generalContentExists != null)
             {
                 return new ErrorResult(generalContentExists.Message);
             }
@@ -52,13 +52,9 @@ namespace Business.Concrete
             return new SuccessResult(Messages.ProductContentDeleteFromDatabase);
         }
 
-        public IDataResult<List<GetProductContentDto>> GetAll()
+        public IDataResult<List<GetAllProductContentDto>> GetAll()
         {
-            List<ProductContent> productContents = _productContentDal.GetAll(pc => pc.IsStatus);
-
-            List<GetProductContentDto> productContentDtos = _mapper.Map<List<GetProductContentDto>>(productContents);
-
-            return new SuccessDataResult<List<GetProductContentDto>>(productContentDtos, Messages.ProductContentsListed);
+            return new SuccessDataResult<List<GetAllProductContentDto>>(_productContentDal.GetProductContentDetails(), Messages.ProductContentsListed);
         }
 
         public IDataResult<GetProductContentByIdDto> GetById(int productContentId)
@@ -88,7 +84,7 @@ namespace Business.Concrete
             _mapper.Map(productContentDto, productContent);
 
             IResult result = BusinessRules.Run(CheckIfGeneralContentIdExists(productContent.GeneralContentId), CheckIfProductIdExists(productContent.ProductId));
-            if(!result.Success)
+            if(result != null)
             {
                 return new ErrorResult(result.Message);
             }
@@ -113,15 +109,10 @@ namespace Business.Concrete
             return new SuccessResult(Messages.ProductContentDeleted);
         }
 
-        public IDataResult<List<GetProductContentDetailDto>> GetProductContentDetails()
-        {
-            return new SuccessDataResult<List<GetProductContentDetailDto>>(_productContentDal.GetProductContentDetails(), Messages.ProductContentsListed);
-        }
-
         private IResult CheckIfGeneralContentIdExists(int generalContentId)
         {
-            var result = _GeneralContentDal.Get(g => g.Id == generalContentId);
-            if(result is null)
+            var generalContent = _GeneralContentDal.Get(g => g.Id == generalContentId);
+            if(generalContent is null || generalContent.IsStatus == false)
             {
                 return new ErrorResult(Messages.GeneralContentIsNull);
             }
@@ -131,7 +122,7 @@ namespace Business.Concrete
         private IResult CheckIfProductIdExists(int productId)
         {
             var product = _productDal.Get(p => p.Id == productId);
-            if(product is null)
+            if(product is null || product.IsStatus == false)
             {
                 return new ErrorResult(Messages.ProductIsNull);
             }

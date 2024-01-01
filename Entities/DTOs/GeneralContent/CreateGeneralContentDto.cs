@@ -8,5 +8,6 @@ namespace Entities.DTOs.GeneralContent
         public string Type { get; set; }
         public int Value { get; set; }
         public bool IsCritialLevel { get; set; }
+        public string ImagePath { get; set; }
     }
 }

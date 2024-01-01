@@ -1,4 +1,6 @@
-﻿namespace Business.Constans
+﻿using Entities.DTOs.ProductContent;
+
+namespace Business.Constans
 {
     public class Messages
     {
@@ -87,5 +89,6 @@
         public static string SuccessfulLogin = "Sisteme giriş başarılı";
         public static string AuthorizationDenied = "Yetkiniz Yok";
         public static string RoleAdded = "Rol oluşturuldu";
+        public static string GeneralContentAndProductIdListed = "Id'leri girilen ürün içeriği listelendi";
     }
 }

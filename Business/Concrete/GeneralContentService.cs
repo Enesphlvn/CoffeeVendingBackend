@@ -6,6 +6,7 @@ using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
+using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
 using Entities.DTOs.GeneralContent;
 
@@ -29,21 +30,22 @@ namespace Business.Concrete
 
             IResult result = BusinessRules.Run(CheckIfGeneralContentNameExists(generalContent.Name));
 
-            if (result is null)
+            if (result != null)
             {
-                generalContent.Type = generalContent.Type.ToLowerInvariant();
-
-                _generalContentDal.Add(generalContent);
-
-                return new SuccessResult(Messages.GeneralContentAdded);
+                return new ErrorResult(result.Message);
             }
-            return result;
+
+            generalContent.Type = generalContent.Type.ToLowerInvariant();
+
+            _generalContentDal.Add(generalContent);
+
+            return new SuccessResult(Messages.GeneralContentAdded);
         }
 
         public IResult HardDelete(int generalContentId)
         {
             GeneralContent generalContent = _generalContentDal.Get(g => g.Id == generalContentId);
-            if(generalContent is null)
+            if (generalContent is null)
             {
                 return new ErrorResult(Messages.NoDataOnThisId);
             }
@@ -78,7 +80,6 @@ namespace Business.Concrete
         public IResult Update(UpdateGeneralContentDto generalContentDto)
         {
             var generalContent = _generalContentDal.Get(g => g.Id == generalContentDto.Id);
-
             if (generalContent is null)
             {
                 return new ErrorResult(Messages.GeneralContentIsNull);
@@ -111,7 +112,8 @@ namespace Business.Concrete
 
         private IResult CheckIfGeneralContentNameExists(string generalContentName)
         {
-            var generalContent = _generalContentDal.GetAll(g => g.Name.ToUpper() == generalContentName.ToUpper()).Any();
+            var generalContent = _generalContentDal.GetAll(gc => gc.Name.ToUpper().Trim() == generalContentName.ToUpper().Trim()).Any();
+
             if (generalContent)
             {
                 return new ErrorResult(Messages.GeneralContentNameAlreadyExists);

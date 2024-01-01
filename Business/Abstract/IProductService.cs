@@ -11,5 +11,6 @@ namespace Business.Abstract
         IResult Delete(int productId);
         IResult HardDelete(int productId);
         IDataResult<GetProductByIdDto> GetById(int productId);
+        IDataResult<List<GetGeneralContentIdDto>> GetProductsByGeneralContentId(int generalContentId);
     }
 }

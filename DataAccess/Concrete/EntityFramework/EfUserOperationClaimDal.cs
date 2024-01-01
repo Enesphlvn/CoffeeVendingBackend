@@ -7,7 +7,7 @@ namespace DataAccess.Concrete.EntityFramework
 {
     public class EfUserOperationClaimDal : EfEntityRepositoryBase<UserOperationClaim, CoffeeVendingContext>, IUserOperationClaimDal
     {
-        public List<UserOperationClaimDetailDto> GetUserOperationClaimDetails()
+        public List<GetAllUserOperationClaimDto> GetUserOperationClaimDetails()
         {
             using (CoffeeVendingContext context = new CoffeeVendingContext())
             {
@@ -16,10 +16,12 @@ namespace DataAccess.Concrete.EntityFramework
                              on uoc.UserId equals u.Id
                              join oc in context.OperationClaims
                              on uoc.OperationClaimId equals oc.Id
-                             select new UserOperationClaimDetailDto
+                             select new GetAllUserOperationClaimDto
                              {
                                  Id = uoc.Id,
+                                 UserId = u.Id,
                                  UserName = (u.FirstName + " " + u.LastName),
+                                 OperationClaimId = oc.Id,
                                  OperationClaimName = oc.Name
                              };
                 return result.ToList();

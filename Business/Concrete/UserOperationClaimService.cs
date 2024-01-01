@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Business.Abstract;
 using Business.Constans;
-using Business.ValidationRules.FluentValidation.OperationClaim;
 using Business.ValidationRules.FluentValidation.UserOperationClaim;
 using Core.Aspects.Autofac.Validation;
 using Core.Entities.Concrete;
@@ -33,7 +32,7 @@ namespace Business.Concrete
             var userOperationClaim = _mapper.Map<UserOperationClaim>(userOperationClaimDto);
 
             IResult result = BusinessRules.Run(CheckIfOperationClaimIdExists(userOperationClaim.OperationClaimId), CheckIfUserIdExists(userOperationClaim.UserId));
-            if(!result.Success)
+            if(result != null)
             {
                 return new ErrorResult(result.Message);
             }
@@ -57,18 +56,9 @@ namespace Business.Concrete
             return new SuccessResult(Messages.UserOperationClaimDeleted);
         }
 
-        public IDataResult<List<GetUserOperationClaimDto>> GetAll()
+        public IDataResult<List<GetAllUserOperationClaimDto>> GetAll()
         {
-            List<UserOperationClaim> userOperationClaims = _userOperationClaimDal.GetAll(uoc => uoc.IsStatus);
-
-            List<GetUserOperationClaimDto> userOperationClaimDtos = _mapper.Map<List<GetUserOperationClaimDto>>(userOperationClaims);
-
-            return new SuccessDataResult<List<GetUserOperationClaimDto>>(userOperationClaimDtos, Messages.UserOperationClaimsListed);
-        }
-
-        public IDataResult<List<UserOperationClaimDetailDto>> GetUserOperationClaimDetails()
-        {
-            return new SuccessDataResult<List<UserOperationClaimDetailDto>>(_userOperationClaimDal.GetUserOperationClaimDetails(), Messages.UserOperationClaimsListed);
+            return new SuccessDataResult<List<GetAllUserOperationClaimDto>>(_userOperationClaimDal.GetUserOperationClaimDetails(), Messages.UserOperationClaimsListed);
         }
 
         public IResult HardDelete(int userOperationClaimId)
@@ -94,7 +84,7 @@ namespace Business.Concrete
             _mapper.Map(userOperationClaimDto, userOperationClaim);
 
             IResult result = BusinessRules.Run(CheckIfOperationClaimIdExists(userOperationClaim.OperationClaimId), CheckIfUserIdExists(userOperationClaim.UserId));
-            if(!result.Success)
+            if(result != null)
             {
                 return new ErrorResult(result.Message);
             }
@@ -105,8 +95,8 @@ namespace Business.Concrete
 
         private IResult CheckIfUserIdExists(int userId)
         {
-            var result = _userDal.Get(u => u.Id == userId);
-            if (result is null)
+            var user = _userDal.Get(u => u.Id == userId);
+            if (user is null || user.IsStatus == false)
             {
                 return new ErrorResult(Messages.UserIsNull);
             }
@@ -115,8 +105,8 @@ namespace Business.Concrete
 
         private IResult CheckIfOperationClaimIdExists(int operationClaimId)
         {
-            var result = _operationClaimDal.Get(o => o.Id == operationClaimId);
-            if (result is null)
+            var operationClaim = _operationClaimDal.Get(o => o.Id == operationClaimId);
+            if (operationClaim is null || operationClaim.IsStatus == false)
             {
                 return new ErrorResult(Messages.OperationClaimIsNull);
             }

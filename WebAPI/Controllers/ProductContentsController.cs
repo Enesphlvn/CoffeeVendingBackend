@@ -26,17 +26,6 @@ namespace WebAPI.Controllers
             return BadRequest();
         }
 
-        [HttpGet("getproductcontentdetails")]
-        public IActionResult GetProductContentDetails()
-        {
-            var result = _productContentService.GetProductContentDetails();
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest();
-        }
-
         [HttpGet("getbyid")]
         public IActionResult GetById(int productContentId)
         {

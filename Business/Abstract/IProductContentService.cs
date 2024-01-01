@@ -5,8 +5,7 @@ namespace Business.Abstract
 {
     public interface IProductContentService
     {
-        IDataResult<List<GetProductContentDto>> GetAll();
-        IDataResult<List<GetProductContentDetailDto>> GetProductContentDetails();
+        IDataResult<List<GetAllProductContentDto>> GetAll();
         IResult Add(CreateProductContentDto productContentDto);
         IResult Update(UpdateProductContentDto productContentDto);
         IResult Delete(int productContentId);

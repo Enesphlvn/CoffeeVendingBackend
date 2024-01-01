@@ -15,6 +15,9 @@ namespace Business.ValidationRules.FluentValidation.GeneralContent
 
             RuleFor(g => g.Value).NotEmpty()
                 .GreaterThanOrEqualTo(1000);
+
+            RuleFor(p => p.ImagePath).MaximumLength(250)
+                .Must(path => path.ToLower().EndsWith(".jpg"));
         }
     }
 }

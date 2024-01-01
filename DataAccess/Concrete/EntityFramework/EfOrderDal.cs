@@ -7,7 +7,7 @@ namespace DataAccess.Concrete.EntityFramework
 {
     public class EfOrderDal : EfEntityRepositoryBase<Order, CoffeeVendingContext>, IOrderDal
     {
-        public List<GetOrderDetailDto> GetOrderDetails()
+        public List<GetAllOrderDto> GetOrderDetails()
         {
             using (CoffeeVendingContext context = new CoffeeVendingContext())
             {
@@ -16,13 +16,16 @@ namespace DataAccess.Concrete.EntityFramework
                              on o.ProductId equals p.Id
                              join u in context.Users
                              on o.UserId equals u.Id
-                             select new GetOrderDetailDto
+                             where o.IsStatus == true
+                             select new GetAllOrderDto
                              {
                                  Id = o.Id,
+                                 ProductId = p.Id,
                                  ProductName = p.Name,
+                                 UserId = u.Id,
+                                 UserName = (u.FirstName + " " + u.LastName),
                                  AmountPaid = o.AmountPaid,
                                  RefundPaid = o.RefundPaid,
-                                 UserName = (u.FirstName + " " + u.LastName)
                              };
                 return result.ToList();
             }

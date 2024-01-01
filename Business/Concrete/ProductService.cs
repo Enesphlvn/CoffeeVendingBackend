@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Business.Abstract;
-using Business.BusinessAspects.Autofac;
 using Business.Constans;
 using Business.ValidationRules.FluentValidation.Product;
 using Core.Aspects.Autofac.Validation;
@@ -30,22 +29,23 @@ namespace Business.Concrete
 
             IResult result = BusinessRules.Run(CheckIfProductNameExists(product.Name));
 
-            if (result is null)
+            if (result != null)
             {
-                _productDal.Add(product);
-                return new SuccessResult(Messages.ProductAdded);
+                return new ErrorResult(result.Message);
             }
 
-            return new ErrorResult(result.Message);
+            _productDal.Add(product);
+            return new SuccessResult(Messages.ProductAdded);
         }
 
         public IResult HardDelete(int productId)
         {
             Product product = _productDal.Get(p => p.Id == productId);
-            if(product is null)
+            if (product is null)
             {
                 return new ErrorResult(Messages.NoDataOnThisId);
             }
+
             _productDal.Delete(product);
             return new SuccessResult(Messages.ProductDeleteFromDatabase);
         }
@@ -87,6 +87,7 @@ namespace Business.Concrete
             _mapper.Map(productDto, product);
 
             _productDal.Update(product);
+
             return new SuccessResult(Messages.ProductUpdated);
         }
 
@@ -106,10 +107,19 @@ namespace Business.Concrete
             return new SuccessResult(Messages.ProductDeleted);
         }
 
+        public IDataResult<List<GetGeneralContentIdDto>> GetProductsByGeneralContentId(int generalContentId)
+        {
+            var result = _productDal.GetByGeneralContentId(generalContentId);
+            if (result is null)
+            {
+                return new ErrorDataResult<List<GetGeneralContentIdDto>>();
+            }
+            return new SuccessDataResult<List<GetGeneralContentIdDto>>(result, Messages.ProductIdListed);
+        }
+
         private IResult CheckIfProductNameExists(string productName)
         {
-            var product = _productDal.GetAll(p => p.Name.ToUpper() == productName.ToUpper()).Any();
-
+            var product = _productDal.GetAll(p => p.Name.ToUpper().Trim() == productName.ToUpper().Trim()).Any();
             if (product)
             {
                 return new ErrorResult(Messages.ProductNameAlreadyExists);

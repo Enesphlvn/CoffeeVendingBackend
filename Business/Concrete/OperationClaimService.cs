@@ -29,13 +29,13 @@ namespace Business.Concrete
 
             IResult result = BusinessRules.Run(CheckIfOperationClaimNameExists(operationClaim.Name));
 
-            if (result is null)
+            if (result != null)
             {
-                _operationClaimDal.Add(operationClaim);
-                return new SuccessResult(Messages.OperationClaimAdded);
+                return new ErrorResult(result.Message);
             }
 
-            return new ErrorResult(result.Message);
+            _operationClaimDal.Add(operationClaim);
+            return new SuccessResult(Messages.OperationClaimAdded);
         }
 
         public IResult Delete(int operationClaimId)
@@ -85,10 +85,10 @@ namespace Business.Concrete
             _operationClaimDal.Update(operationClaim);
             return new SuccessResult(Messages.OperationClaimUpdated);
         }
-
+            
         private IResult CheckIfOperationClaimNameExists(string operationClaimName)
         {
-            var operationClaim = _operationClaimDal.GetAll(o => o.Name.ToUpper() == operationClaimName.ToUpper()).Any();
+            var operationClaim = _operationClaimDal.GetAll(o => o.Name.Trim().ToUpper() == operationClaimName.Trim().ToUpper()).Any();
 
             if (operationClaim)
             {

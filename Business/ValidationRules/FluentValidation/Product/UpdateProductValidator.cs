@@ -17,7 +17,7 @@ namespace Business.ValidationRules.FluentValidation.Product
             RuleFor(p => p.Description).MaximumLength(500);
 
             RuleFor(p => p.ImagePath).Length(0, 255)
-                .Must(path => path.ToLower().EndsWith(".jpg") || path.ToLower().EndsWith(".jpeg"));
+                .Must(path => path.ToLower().EndsWith(".jpg"));
         }
     }
 }
