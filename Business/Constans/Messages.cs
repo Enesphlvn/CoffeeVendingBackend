@@ -68,6 +68,7 @@ namespace Business.Constans
         public static string OperationClaimDeleted = "Rol silme işlemi başarılı";
         public static string OperationClaimDeleteFromDatabase = "Rol veritabanından silindi!";
         public static string OperationClaimAlreadyExists = "Bu rol zaten mevcut";
+        public static string OperationClaimIdListed = "Id'si girilen rol listelendi";
 
 
         public static string UserOperationClaimsListed = "Kullanıcı rolleri listelendi";
@@ -76,6 +77,7 @@ namespace Business.Constans
         public static string UserOperationClaimIsNull = "Girilen Id'de bir kullanıcı rolü yok";
         public static string UserOperationClaimUpdated = "kullanıcı rolü başarıyla güncellendi";
         public static string UserOperationClaimDeleted = "Kullanıcı rolü başarıyla silindi";
+        public static string UserOperationClaimIdListed = "Id'si girilen kulllanıcı rolü listelendi";
 
 
         public static string OldPasswordError = "Eski şifre hatalı";

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Constans;
 using Business.ValidationRules.FluentValidation.Order;
 using Core.Aspects.Autofac.Validation;
@@ -63,6 +64,7 @@ namespace Business.Concrete
             return new SuccessResult($" Para üstünüz: {order.RefundPaid}₺");
         }
 
+        [SecuredOperation("admin")]
         public IResult HardDelete(int orderId)
         {
             Order order = _orderDal.Get(o => o.Id == orderId);
@@ -92,6 +94,7 @@ namespace Business.Concrete
             return new SuccessDataResult<GetOrderByIdDto>(orderDto, Messages.OrderIdListed);
         }
 
+        [SecuredOperation("admin")]
         [ValidationAspect(typeof(UpdateOrderValidator))]
         public IResult Update(UpdateOrderDto orderDto)
         {
@@ -113,6 +116,7 @@ namespace Business.Concrete
             return new SuccessResult(Messages.OrderUpdated);
         }
 
+        [SecuredOperation("admin")]
         public IResult Delete(int orderId)
         {
             Order order = _orderDal.Get(o => o.Id == orderId);

@@ -26,6 +26,17 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
+        [HttpGet("getbyid")]
+        public IActionResult GetById(int operationClaimId)
+        {
+            var result = _operationClaimService.GetById(operationClaimId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
         [HttpPost("add")]
         public IActionResult Add(CreateOperationClaimDto operationClaimDto)
         {

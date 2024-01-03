@@ -22,7 +22,7 @@ namespace WebAPI.Controllers
             var result = _authService.CreateAccessToken(registerResult.Data);
             if (result.Success)
             {
-                return Ok(new { Message = "Kaydınız başarılı bir şekilde oluşturuldu", Data = result.Data });
+                return Ok(new { Data = result.Data, result.Success, Message = "Kaydınız başarılı bir şekilde oluşturuldu" });
             }
             return BadRequest(result);
         }
@@ -36,7 +36,7 @@ namespace WebAPI.Controllers
                 var result = _authService.CreateAccessToken(loginResult.Data);
                 if (result.Success)
                 {
-                    return Ok(new { Message = "Sisteme giriş başarılı", Data = result.Data });
+                    return Ok(new { Data = result.Data , result.Success, Message = "Sisteme giriş başarılı" });
                 }
                 return BadRequest(result);
             }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Constans;
 using Business.ValidationRules.FluentValidation.GeneralContent;
 using Core.Aspects.Autofac.Validation;
@@ -23,6 +24,7 @@ namespace Business.Concrete
             _mapper = mapper;
         }
 
+        [SecuredOperation("admin")]
         [ValidationAspect(typeof(CreateGeneralContentValidator))]
         public IResult Add(CreateGeneralContentDto generalContentDto)
         {
@@ -42,6 +44,7 @@ namespace Business.Concrete
             return new SuccessResult(Messages.GeneralContentAdded);
         }
 
+        [SecuredOperation("admin")]
         public IResult HardDelete(int generalContentId)
         {
             GeneralContent generalContent = _generalContentDal.Get(g => g.Id == generalContentId);
@@ -76,6 +79,7 @@ namespace Business.Concrete
             return new SuccessDataResult<GetGeneralContentByIdDto>(generalContentDto, Messages.GeneralContentIdListed);
         }
 
+        [SecuredOperation("admin")]
         [ValidationAspect(typeof(UpdateGeneralContentValidator))]
         public IResult Update(UpdateGeneralContentDto generalContentDto)
         {
@@ -94,6 +98,7 @@ namespace Business.Concrete
             return new SuccessResult(Messages.GeneralContentUpdated);
         }
 
+        [SecuredOperation("admin")]
         public IResult Delete(int generalContentId)
         {
             GeneralContent generalContent = _generalContentDal.Get(g => g.Id == generalContentId);

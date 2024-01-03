@@ -1,4 +1,5 @@
 ﻿using Core.Utilities.Results;
+using Entities.DTOs.GeneralContent;
 using Entities.DTOs.OperationClaim;
 
 namespace Business.Abstract
@@ -10,5 +11,6 @@ namespace Business.Abstract
         IResult Update(UpdateOperationClaimDto operationClaimDto);
         IResult Delete(int operationClaimId);
         IResult HardDelete(int operationClaimId);
+        IDataResult<GetOperationClaimByIdDto> GetById(int operationClaimId);
     }
 }

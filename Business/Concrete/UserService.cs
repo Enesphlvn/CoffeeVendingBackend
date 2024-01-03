@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Constans;
 using Business.ValidationRules.FluentValidation.User;
 using Core.Aspects.Autofac.Validation;
@@ -22,6 +23,7 @@ namespace Business.Concrete
             _mapper = mapper;
         }
 
+        [SecuredOperation("admin")]
         public IResult Delete(int userId)
         {
             User user = _userDal.Get(u => u.Id == userId);
@@ -75,6 +77,7 @@ namespace Business.Concrete
             return new SuccessDataResult<GetUserByMailDto>(userDto, Messages.UserMailListed);
         }
 
+        [SecuredOperation("admin")]
         public IResult HardDelete(int userId)
         {
             User user = _userDal.Get(u => u.Id == userId);
@@ -87,6 +90,7 @@ namespace Business.Concrete
             return new SuccessResult(Messages.UserDeleteFromDatabase);
         }
 
+        [SecuredOperation("admin")]
         [ValidationAspect(typeof(UpdateUserValidator))]
         public IResult Update(UpdateUserDto updateUserDto)
         {

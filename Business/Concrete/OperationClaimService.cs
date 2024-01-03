@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Constans;
 using Business.ValidationRules.FluentValidation.OperationClaim;
 using Core.Aspects.Autofac.Validation;
@@ -22,6 +23,7 @@ namespace Business.Concrete
             _mapper = mapper;
         }
 
+        [SecuredOperation("admin")]
         [ValidationAspect(typeof(CreateOperationClaimValidator))]
         public IResult Add(CreateOperationClaimDto operationClaimDto)
         {
@@ -38,6 +40,7 @@ namespace Business.Concrete
             return new SuccessResult(Messages.OperationClaimAdded);
         }
 
+        [SecuredOperation("admin")]
         public IResult Delete(int operationClaimId)
         {
             var operationClaim = _operationClaimDal.Get(o => o.Id == operationClaimId);
@@ -60,6 +63,21 @@ namespace Business.Concrete
             return new SuccessDataResult<List<OperationClaimDetailDto>>(operationClaimDtos, Messages.OperationClaimsListed);
         }
 
+        public IDataResult<GetOperationClaimByIdDto> GetById(int operationClaimId)
+        {
+            var operationClaim = _operationClaimDal.Get(oc => oc.Id == operationClaimId);
+
+            if( operationClaim is null)
+            {
+                return new ErrorDataResult<GetOperationClaimByIdDto>(Messages.OperationClaimIsNull);
+            }
+
+            var operationClaimDto = _mapper.Map<GetOperationClaimByIdDto>(operationClaim);
+
+            return new SuccessDataResult<GetOperationClaimByIdDto>(operationClaimDto, Messages.OperationClaimIdListed);
+        }
+
+        [SecuredOperation("admin")]
         public IResult HardDelete(int operationClaimId)
         {
             OperationClaim operationClaim = _operationClaimDal.Get(o => o.Id == operationClaimId);
@@ -71,6 +89,7 @@ namespace Business.Concrete
             return new SuccessResult(Messages.OperationClaimDeleteFromDatabase);
         }
 
+        [SecuredOperation("admin")]
         [ValidationAspect(typeof(UpdateOperationClaimValidator))]
         public IResult Update(UpdateOperationClaimDto operationClaimDto)
         {
