@@ -63,18 +63,16 @@ namespace Business.Concrete
             return new SuccessDataResult<GetUserByIdDto>(userDtos, Messages.UserIdListed);
         }
 
-        public IDataResult<GetUserByMailDto> GetByMail(string email)
+        public IDataResult<User> GetByMail(string email)
         {
             var user = _userDal.Get(u => u.Email == email);
 
             if (user is null)
             {
-                return new ErrorDataResult<GetUserByMailDto>(Messages.MailNotFound);
+                return new ErrorDataResult<User>(Messages.MailNotFound);
             }
 
-            var userDto = _mapper.Map<GetUserByMailDto>(user);
-
-            return new SuccessDataResult<GetUserByMailDto>(userDto, Messages.UserMailListed);
+            return new SuccessDataResult<User>(user, Messages.UserMailListed);
         }
 
         [SecuredOperation("admin")]
@@ -90,7 +88,6 @@ namespace Business.Concrete
             return new SuccessResult(Messages.UserDeleteFromDatabase);
         }
 
-        [SecuredOperation("admin")]
         [ValidationAspect(typeof(UpdateUserValidator))]
         public IResult Update(UpdateUserDto updateUserDto)
         {

@@ -53,7 +53,7 @@ namespace Business.Concrete
         [ValidationAspect(typeof(RegisterUserValidator))]
         public IDataResult<User> Register(RegisterUserDto registerUserDto)
         {
-            var result = UserExists(registerUserDto.Email);
+            var result = UserMailExists(registerUserDto.Email);
             if (!result.Success)
             {
                 return new ErrorDataResult<User>(result.Message);
@@ -94,12 +94,12 @@ namespace Business.Concrete
                 LastName = userForRegisterDto.LastName,
                 PasswordHash = passwordhash,
                 PasswordSalt = passwordSalt,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = DateTimeOffset.Now, 
                 IsStatus = true
             };
         }
 
-        private IResult UserExists(string email)
+        private IResult UserMailExists(string email)
         {
             var user = GetByMail(email);
 

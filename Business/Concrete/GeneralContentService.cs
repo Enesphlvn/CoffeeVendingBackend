@@ -128,9 +128,9 @@ namespace Business.Concrete
 
         private void CheckCriticalLevel(GeneralContent generalContent)
         {
-            if (generalContent.Value >= 500)
+            if (generalContent.Value < generalContent.IsCritialLevelValue)
             {
-                generalContent.IsCritialLevel = false;
+                generalContent.IsCritialLevel = true;
             }
         }
     }

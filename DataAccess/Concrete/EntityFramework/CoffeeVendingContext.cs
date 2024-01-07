@@ -6,10 +6,15 @@ namespace DataAccess.Concrete.EntityFramework
 {
     public class CoffeeVendingContext : DbContext
     {
+        public CoffeeVendingContext()
+        {
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {           
             optionsBuilder.EnableSensitiveDataLogging(true);
             optionsBuilder.UseNpgsql("Host=localhost; Database=CoffeeVending; Username=postgres; Password=12345");
+            
         }
 
         public DbSet<Product> Products { get; set; }

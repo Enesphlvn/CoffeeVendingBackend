@@ -9,7 +9,7 @@ namespace Business.Mapping.Profiles.ProductContentProfiles
         public CreateProductContentProfile()
         {
             CreateMap<ProductContent, CreateProductContentDto>().ReverseMap()
-                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTimeOffset.Now))
                 .ForMember(dest => dest.IsStatus, opt => opt.MapFrom(src => true));
         }
     }

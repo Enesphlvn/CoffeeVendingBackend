@@ -32,6 +32,7 @@ namespace Business.Concrete
             _userDal = userDal;
         }
 
+        [SecuredOperation("admin,moderator,manager")]
         [ValidationAspect(typeof(CreateOrderValidator))]
         public IResult Add(CreateOrderDto orderDto)
         {
@@ -194,12 +195,12 @@ namespace Business.Concrete
 
             if(generalContent.Value < productContent.Unit)
             {
-                return new ErrorResult(Messages.NoGeneralContentInStock);
+                return new ErrorResult($"{generalContent.Name} tükendi.");
             }
 
             generalContent.Value -= productContent.Unit;
 
-            if (generalContent.Value < 500)
+            if (generalContent.Value < generalContent.IsCritialLevelValue)
             {
                 generalContent.IsCritialLevel = true;
             }

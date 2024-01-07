@@ -43,7 +43,6 @@ namespace Business.Constans
         public static string OrderDeleteFromDatabase = "Sipariş veritabanından silindi!";
         public static string GeneralContentNotFoundForProduct = "Ürün için genel içerik bulunamadı";
         public static string ProductContentNotFoundForProduct = "Ürün için içerik bulunamadı";
-        public static string NoGeneralContentInStock = "Kahve için gerekli malzemeler tükendi";
         public static string CritialLevelGeneralContentInStock = "Kahve için gerekli malzemeler kritik seviyede!";
         public static string AmountPaidInsufficient = "Ödenen para yetersiz!";
 
@@ -92,5 +91,7 @@ namespace Business.Constans
         public static string AuthorizationDenied = "Yetkiniz Yok";
         public static string RoleAdded = "Rol oluşturuldu";
         public static string GeneralContentAndProductIdListed = "Id'leri girilen ürün içeriği listelendi";
+        
+        public static string StatisticsListed = "İstatistikler listelendi";
     }
 }

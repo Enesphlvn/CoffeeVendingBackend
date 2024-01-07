@@ -10,6 +10,7 @@ namespace Entities.Concrete
         public string Name { get; set; }
         public string Type { get; set; }
         public int Value { get; set; }
+        public int IsCritialLevelValue { get; set; }
         public bool IsCritialLevel { get; set; }
         public string ImagePath { get; set; }
     }
