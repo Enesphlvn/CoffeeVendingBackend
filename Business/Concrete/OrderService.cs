@@ -32,7 +32,6 @@ namespace Business.Concrete
             _userDal = userDal;
         }
 
-        [SecuredOperation("admin,moderator,manager")]
         [ValidationAspect(typeof(CreateOrderValidator))]
         public IResult Add(CreateOrderDto orderDto)
         {
@@ -203,6 +202,10 @@ namespace Business.Concrete
             if (generalContent.Value < generalContent.IsCritialLevelValue)
             {
                 generalContent.IsCritialLevel = true;
+            }
+            else
+            {
+                generalContent.IsCritialLevel = false;
             }
 
             _generalContentDal.Update(generalContent);

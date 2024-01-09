@@ -37,11 +37,14 @@ namespace Business.Concrete
                     MonthlyOrderCount = MonthlyOrderCount(),
                     WeeklyRevenue = WeeklyRevenue(),
                     WeeklyOrderCount = WeeklyOrderCount(),
-                    TopSoldProduct = TopSoldProducts(),
-                    LeastSoldProduct = LeastSoldProducts(),
-                    TopOrderingUserNames = TopOrderingUsers(),
-                    BusiestOrderHours = BusiestOrderHours(),
-                    BusiestOrderDaysOfWeek = BusiestOrderDaysOfWeek(),
+                    TopSoldProduct = TopSoldProduct(),
+                    LeastSoldProduct = LeastSoldProduct(),
+                    TopOrderingUser = TopOrderingUser(),
+                    LeastOrderingUser = LeastOrderingUser(),
+                    TopOrderingHour = TopOrderingHour(),
+                    LeastOrderingHour = LeastOrderingHour(),
+                    TopOrderingDayOfWeek = TopOrderingDayOfWeek(),
+                    LeastOrderingDayOfWeek = LeastOrderingDayOfWeek(),
                     LowStockGeneralContent = LowStockGeneralContent(),
                     OutOfStockProducts = OutOfStockProducts(),
                 };
@@ -119,62 +122,110 @@ namespace Business.Concrete
             return totalRevenue;
         }
 
-        private List<string> TopSoldProducts()
+        private ProductStatistics TopSoldProduct()
         {
-            var topSoldProducts = _orderDal.GetAll().GroupBy(o => o.ProductId)
-                .OrderByDescending(g => g.Sum(o => o.AmountPaid))
-                .Take(3)
-                .Select(g => _productDal.Get(p => p.Id == g.Key))
-                .Select(product => product != null ? product.Name : string.Empty)
-                .ToList();
+            var topSoldProduct = _orderDal.GetAll().GroupBy(o => o.ProductId)
+                .OrderByDescending(g => g.Sum(o => o.AmountPaid)).FirstOrDefault();
 
-            return topSoldProducts;
+            if (topSoldProduct != null)
+            {
+                return new ProductStatistics
+                {
+                    ProductName = GetProductName(topSoldProduct.Key),
+                    Quantity = topSoldProduct.Count()
+                };
+            }
+
+            return null;
         }
 
-        private List<string> LeastSoldProducts()
+        private ProductStatistics LeastSoldProduct()
         {
-            var leastSoldProducts = _orderDal.GetAll().GroupBy(o => o.ProductId)
-                .OrderBy(g => g.Sum(o => o.AmountPaid))
-                .Take(3)
-                .Select(g => _productDal.Get(p => p.Id == g.Key))
-                .Select(product => product != null ? product.Name : string.Empty)
-                .ToList();
+            var topSoldProduct = _orderDal.GetAll().GroupBy(o => o.ProductId)
+                .OrderBy(g => g.Sum(o => o.AmountPaid)).FirstOrDefault();
 
-            return leastSoldProducts;
+            if (topSoldProduct != null)
+            {
+                return new ProductStatistics
+                {
+                    ProductName = GetProductName(topSoldProduct.Key),
+                    Quantity = topSoldProduct.Count()
+                };
+            }
+
+            return null;
         }
 
-        private List<string> TopOrderingUsers()
+        private UserStatistics TopOrderingUser()
         {
-            var topOrderingUserNames = _orderDal.GetAll().GroupBy(o => o.UserId)
-                .OrderByDescending(g => g.Count()).Take(3)
-                .Select(g => _userDal.Get(u => u.Id == g.Key))
-                .Select(user => user != null ? (user.FirstName + " " + user.LastName) : string.Empty)
-                .ToList();
+            var topOrderingUser = _orderDal.GetAll().Where(o => o.IsStatus).GroupBy(o => o.UserId)
+                .OrderByDescending(g => g.Count()).FirstOrDefault();
 
-            return topOrderingUserNames;
+            if (topOrderingUser != null)
+            {
+                return new UserStatistics
+                {
+                    UserName = GetUserName(topOrderingUser.Key),
+                    Quantity = topOrderingUser.Count()
+                };
+            }
+
+            return null;
         }
 
-        private List<int> BusiestOrderHours()
+        private UserStatistics LeastOrderingUser()
         {
-            var busiestOrderHours = _orderDal.GetAll().GroupBy(o => o.CreatedAt.Hour)
-                .OrderByDescending(g => g.Count()).Take(2)
-                .Select(g => g.Key)
-                .ToList();
+            var leastOrderingUser = _orderDal.GetAll().Where(o => o.IsStatus).GroupBy(o => o.UserId)
+                .Where(g => g.Key != 0)
+                .OrderBy(g => g.Count()).ThenBy(g => g.Key).FirstOrDefault();
 
-            return busiestOrderHours;
+            if (leastOrderingUser != null)
+            {
+                var userName = GetUserName(leastOrderingUser.Key);
+
+                return new UserStatistics
+                {
+                    UserName = string.IsNullOrEmpty(userName) ? "Bilinmeyen Kullanıcı" : userName,
+                    Quantity = leastOrderingUser.Count()
+                };
+            }
+
+            return null;
         }
 
-        private List<string> BusiestOrderDaysOfWeek()
-        {
-            var busiestOrderDaysOfWeek = _orderDal.GetAll()
-                .GroupBy(o => o.CreatedAt.DayOfWeek)
-                .OrderByDescending(g => g.Count())
-                .Take(3)
-                .Select(g => g.Key)
-                .Select(dayOfWeek => CultureInfo.CurrentCulture.DateTimeFormat.GetDayName(dayOfWeek))
-                .ToList();
 
-            return busiestOrderDaysOfWeek;
+
+
+        private int TopOrderingHour()
+        {
+            var topOrderingHour = _orderDal.GetAll().GroupBy(o => o.CreatedAt.Hour)
+                .OrderByDescending(g => g.Count()).FirstOrDefault();
+
+            return topOrderingHour != null ? topOrderingHour.Key : 0;
+        }
+
+        private int LeastOrderingHour()
+        {
+            var leastOrderingHour = _orderDal.GetAll().GroupBy(o => o.CreatedAt.Hour)
+                .OrderBy(g => g.Count()).FirstOrDefault();
+
+            return leastOrderingHour != null ? leastOrderingHour.Key : 0;
+        }
+
+        private string TopOrderingDayOfWeek()
+        {
+            var topOrderingDayOfWeek = _orderDal.GetAll().GroupBy(o => o.CreatedAt.DayOfWeek)
+                .OrderByDescending(g => g.Count()).FirstOrDefault();
+
+            return topOrderingDayOfWeek != null ? CultureInfo.CurrentCulture.DateTimeFormat.GetDayName(topOrderingDayOfWeek.Key) : string.Empty;
+        }
+
+        private string LeastOrderingDayOfWeek()
+        {
+            var leastOrderingDayOfWeek = _orderDal.GetAll().GroupBy(o => o.CreatedAt.DayOfWeek)
+                .OrderBy(g => g.Count()).FirstOrDefault();
+
+            return leastOrderingDayOfWeek != null ? CultureInfo.CurrentCulture.DateTimeFormat.GetDayName(leastOrderingDayOfWeek.Key) : string.Empty;
         }
 
         private List<string> LowStockGeneralContent()
@@ -213,6 +264,20 @@ namespace Business.Concrete
             }
 
             return outOfStockProducts;
+        }
+
+        private string GetProductName(int productId)
+        {
+            var product = _productDal.Get(p => p.Id == productId);
+
+            return product != null ? product.Name : string.Empty;
+        }
+
+        private string GetUserName(int userId)
+        {
+            var user = _userDal.Get(p => p.Id == userId);
+
+            return user != null ? (user.FirstName + " " + user.LastName) : string.Empty;
         }
     }
 

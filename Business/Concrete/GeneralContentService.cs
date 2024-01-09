@@ -132,6 +132,9 @@ namespace Business.Concrete
             {
                 generalContent.IsCritialLevel = true;
             }
+            else {
+                generalContent.IsCritialLevel = false;
+            }
         }
     }
 }
