@@ -14,13 +14,14 @@ namespace Entities.DTOs.Statistics
         public ProductStatistics LeastSoldProduct { get; set; }
         public UserStatistics TopOrderingUser { get; set; }
         public UserStatistics LeastOrderingUser { get; set; }
-        public int TopOrderingHour { get; set; }
-        public int LeastOrderingHour { get; set; }
-        public string TopOrderingDayOfWeek { get; set; }
-        public string LeastOrderingDayOfWeek { get; set; }
-        public List<string> LowStockGeneralContent { get; set; }
+        public DayOfWeekStatistics Sunday { get; set; }
+        public DayOfWeekStatistics Monday { get; set; }
+        public DayOfWeekStatistics Tuesday { get; set; }
+        public DayOfWeekStatistics Wednesday { get; set; }
+        public DayOfWeekStatistics Thursday { get; set; }
+        public DayOfWeekStatistics Friday { get; set; }
+        public DayOfWeekStatistics Saturday { get; set; }
+        public List<LowStockGeneralContentStatistics> LowStockGeneralContent { get; set; }
         public List<string> OutOfStockProducts { get; set; }
     }
-
-
 }

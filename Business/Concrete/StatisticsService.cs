@@ -41,10 +41,13 @@ namespace Business.Concrete
                     LeastSoldProduct = LeastSoldProduct(),
                     TopOrderingUser = TopOrderingUser(),
                     LeastOrderingUser = LeastOrderingUser(),
-                    TopOrderingHour = TopOrderingHour(),
-                    LeastOrderingHour = LeastOrderingHour(),
-                    TopOrderingDayOfWeek = TopOrderingDayOfWeek(),
-                    LeastOrderingDayOfWeek = LeastOrderingDayOfWeek(),
+                    Sunday = Sunday(),
+                    Monday = Monday(),
+                    Tuesday = Tuesday(),
+                    Wednesday = Wednesday(),
+                    Thursday = Thursday(),
+                    Friday = Friday(),
+                    Saturday = Saturday(),
                     LowStockGeneralContent = LowStockGeneralContent(),
                     OutOfStockProducts = OutOfStockProducts(),
                 };
@@ -193,50 +196,55 @@ namespace Business.Concrete
             return null;
         }
 
-
-
-
-        private int TopOrderingHour()
+        private DayOfWeekStatistics Sunday()
         {
-            var topOrderingHour = _orderDal.GetAll().GroupBy(o => o.CreatedAt.Hour)
-                .OrderByDescending(g => g.Count()).FirstOrDefault();
-
-            return topOrderingHour != null ? topOrderingHour.Key : 0;
+            return CreateDayOfWeekStatistics(DayOfWeek.Sunday);
         }
 
-        private int LeastOrderingHour()
+        private DayOfWeekStatistics Monday()
         {
-            var leastOrderingHour = _orderDal.GetAll().GroupBy(o => o.CreatedAt.Hour)
-                .OrderBy(g => g.Count()).FirstOrDefault();
-
-            return leastOrderingHour != null ? leastOrderingHour.Key : 0;
+            return CreateDayOfWeekStatistics(DayOfWeek.Monday);
         }
 
-        private string TopOrderingDayOfWeek()
+        private DayOfWeekStatistics Tuesday()
         {
-            var topOrderingDayOfWeek = _orderDal.GetAll().GroupBy(o => o.CreatedAt.DayOfWeek)
-                .OrderByDescending(g => g.Count()).FirstOrDefault();
-
-            return topOrderingDayOfWeek != null ? CultureInfo.CurrentCulture.DateTimeFormat.GetDayName(topOrderingDayOfWeek.Key) : string.Empty;
+            return CreateDayOfWeekStatistics(DayOfWeek.Tuesday);
         }
 
-        private string LeastOrderingDayOfWeek()
+        private DayOfWeekStatistics Wednesday()
         {
-            var leastOrderingDayOfWeek = _orderDal.GetAll().GroupBy(o => o.CreatedAt.DayOfWeek)
-                .OrderBy(g => g.Count()).FirstOrDefault();
-
-            return leastOrderingDayOfWeek != null ? CultureInfo.CurrentCulture.DateTimeFormat.GetDayName(leastOrderingDayOfWeek.Key) : string.Empty;
+            return CreateDayOfWeekStatistics(DayOfWeek.Wednesday);
         }
 
-        private List<string> LowStockGeneralContent()
+        private DayOfWeekStatistics Thursday()
         {
-            List<string> lowStockGeneralContents = new List<string>();
+            return CreateDayOfWeekStatistics(DayOfWeek.Thursday);
+        }
+
+        private DayOfWeekStatistics Friday()
+        {
+            return CreateDayOfWeekStatistics(DayOfWeek.Friday);
+        }
+
+        private DayOfWeekStatistics Saturday()
+        {
+            return CreateDayOfWeekStatistics(DayOfWeek.Saturday);
+        }
+
+        private List<LowStockGeneralContentStatistics> LowStockGeneralContent()
+        {
+            List<LowStockGeneralContentStatistics> lowStockGeneralContents = new List<LowStockGeneralContentStatistics>();
 
             var lowStockGeneralContentsQuery = _generalContentDal.GetAll(gc => gc.Value < gc.IsCritialLevelValue);
 
             foreach (var generalContent in lowStockGeneralContentsQuery)
             {
-                lowStockGeneralContents.Add(generalContent.Name);
+                lowStockGeneralContents.Add(new LowStockGeneralContentStatistics
+                {
+                    GeneralContentName = generalContent.Name,
+                    Value = generalContent.Value,
+                    Type = generalContent.Type
+                });
             }
 
             return lowStockGeneralContents;
@@ -279,6 +287,15 @@ namespace Business.Concrete
 
             return user != null ? (user.FirstName + " " + user.LastName) : string.Empty;
         }
-    }
 
+        private DayOfWeekStatistics CreateDayOfWeekStatistics(DayOfWeek dayOfWeek)
+        {
+            var orders = _orderDal.GetAll(o => o.CreatedAt.DayOfWeek == dayOfWeek);
+            return new DayOfWeekStatistics
+            {
+                DayName = CultureInfo.CurrentCulture.DateTimeFormat.GetDayName(dayOfWeek),
+                Quantity = orders.Count()
+            };
+        }
+    }
 }
