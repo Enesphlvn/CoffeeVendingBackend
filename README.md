@@ -74,12 +74,12 @@ Kahve otomatları ve kahve satışı yapan iş yerleri için tasarlanmış bu pr
 
 ## :camera: ScreenShots  
 ***Projenin çalışma anından görüntüler:***  
-<br>![login](https://github.com/Enesphlvn/CoffeeVendingBackend/assets/98655108/3e2a08f0-766b-46d4-8575-ac2111cb4ed2)
-<br>![homePage](https://github.com/Enesphlvn/CoffeeVendingBackend/assets/98655108/f7073840-041a-4147-af64-f9d2ef231f14)
-<br>![generalContent](https://github.com/Enesphlvn/CoffeeVendingBackend/assets/98655108/412360d2-053f-4378-beb3-58f6083db950)
-<br>![pay](https://github.com/Enesphlvn/CoffeeVendingBackend/assets/98655108/4ef23aba-5d45-4cbb-98bd-288ae097c251)
-<br>![adminPanel](https://github.com/Enesphlvn/CoffeeVendingBackend/assets/98655108/174b4f0e-585b-4c4c-bab0-f98f6bdce745)
-<br>![statistics](https://github.com/Enesphlvn/CoffeeVendingBackend/assets/98655108/95bc236d-4443-4c49-9091-8a01c7fdd495)
+<br>![login](https://github.com/Enesphlvn/CoffeeVendingBackend/assets/98655108/3e2a08f0-766b-46d4-8575-ac2111cb4ed2)  
+<br>![homePage](https://github.com/Enesphlvn/CoffeeVendingBackend/assets/98655108/29f4ca1e-14ff-45f9-9b75-c55792263442)  
+<br>![generalContent](https://github.com/Enesphlvn/CoffeeVendingBackend/assets/98655108/412360d2-053f-4378-beb3-58f6083db950)  
+<br>![pay](https://github.com/Enesphlvn/CoffeeVendingBackend/assets/98655108/4ef23aba-5d45-4cbb-98bd-288ae097c251)  
+<br>![adminPanel](https://github.com/Enesphlvn/CoffeeVendingBackend/assets/98655108/174b4f0e-585b-4c4c-bab0-f98f6bdce745)  
+<br>![statistics](https://github.com/Enesphlvn/CoffeeVendingBackend/assets/98655108/ee1eb608-b96a-4dc6-843d-f84a70ec9c18)  
 
 ## :pencil2:Authors  
 ***Enes Pehlivan*** - [EnesPehlivan](https://github.com/Enesphlvn)
